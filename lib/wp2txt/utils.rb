@@ -21,6 +21,7 @@ module Wp2txt
       text = remove_emphasis(text)
 
       text = mndash(text)
+      text = remove_ref(text)
       text = make_reference(text)
       text = format_ref(text)
       text = remove_hr(text)
@@ -261,6 +262,10 @@ module Wp2txt
 
   def remove_hr(page)
     page = page.gsub(/^\s*\-+\s*$/, "")
+  end
+
+  def remove_ref(page)
+    page = page.gsub(/(<ref[^>]*>).+?(<\/ref>)/, "")
   end
 
   def make_reference(str)
