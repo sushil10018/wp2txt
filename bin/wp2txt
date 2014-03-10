@@ -117,6 +117,9 @@ wpconv.extract_text do |article|
   else
     result = config[:title_off] ? contents : title + "\n" + contents
   end
-  result = result.gsub(/\[ref\]\s*\[\/ref\]/m){""}
+  result = remove_ref(result)
+  result = remove_tag(result)
+  result = manage_links(result)
+  # result = result.gsub(/\[ref\]\s*\[\/ref\]/m){""}
   result = result.gsub(/\n\n\n+/m){"\n\n"} + "\n"  
 end

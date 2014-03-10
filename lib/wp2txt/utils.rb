@@ -21,11 +21,9 @@ module Wp2txt
       text = remove_emphasis(text)
 
       text = mndash(text)
-      text = remove_ref(text)
       text = make_reference(text)
       text = format_ref(text)
       text = remove_hr(text)
-      text = remove_tag(text)
       text = special_chr(text)
 
       unescape_nowiki(text)
@@ -84,7 +82,19 @@ module Wp2txt
       if contents.index("\n")
         "\n"
       else
-        "[tpl]#{contents}[/tpl]"        
+        # "[tpl]#{contents}[/tpl]"     
+        "#{contents.split("|").last}"
+      end
+    end
+  end
+
+  def manage_links(str, only_not_inline = true)
+    scanner = StringScanner.new(str)
+    result = process_nested_structure(scanner, "[[", "]]") do |contents|
+      if contents.index("\n")
+        "\n"
+      else    
+        "#{contents.split("|").last}"
       end
     end
   end
@@ -265,15 +275,15 @@ module Wp2txt
   end
 
   def remove_ref(page)
-    page = page.gsub(/(<ref[^>]*>).+?(<\/ref>)/, "")
+    page = page.gsub(/(<ref\/>)|((<ref[^>]*>).*?(<\/ref>))/m, "")
   end
 
   def make_reference(str)
     new_str = str.dup
     new_str.gsub!(/<br ?\/>/, "\n")
-    new_str.gsub!(/<ref[^>]*\/>/, "")
-    new_str.gsub!(/<ref[^>]*>/, "[ref]")
-    new_str.gsub!(/<\/ref>/, "[/ref]")
+    # new_str.gsub!(/<ref[^>]*\/>/, "")
+    # new_str.gsub!(/<ref[^>]*>/, "[ref]")
+    # new_str.gsub!(/<\/ref>/, "[/ref]")
     return new_str
   end
 
